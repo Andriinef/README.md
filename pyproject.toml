@@ -27,14 +27,14 @@ include_trailing_comma = true
 force_grid_wrap = 0
 use_parentheses = true
 line_length = 88
-skip = '.venv,venv,env,migrations'
+skip = '.venv,venv,env,migrations,myproject'
 src_paths = []
 
 [tool.mypy]
 python_version = '3.11'
 plugins = []
 mypy_path = []
-exclude = []
+exclude = ['myproject', '@property']
 follow_imports = 'silent'
 warn_redundant_casts = true
 warn_unused_ignores = true
