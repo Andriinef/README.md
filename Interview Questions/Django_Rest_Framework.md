@@ -1033,6 +1033,29 @@ class MyPermission(BasePermission):
 
 В приведенном выше примере MyPermission — это настраиваемый класс разрешений, который расширяет класс BasePermission, предоставляемый DRF. Метод has_permission является основным методом, который определяет, есть ли у пользователя разрешение на доступ к определенной конечной точке или нет. В этом случае метод has_permission проверяет, аутентифицирован ли пользователь, вызывая метод is_authenticated для объекта request.user.
 
+Пример кода для обработки аутентификации в Django REST Framework выглядит следующим образом:
+
+```python
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication, TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+
+class ExampleView(APIView):
+    authentication_classes = [SessionAuthentication, BasicAuthentication, TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, format=None):
+        content = {
+            'user': str(request.user),
+            'auth': str(request.auth),
+        }
+        return Response(content)
+```
+
+Здесь мы определяем класс ExampleView, который наследуется от класса APIView из DRF. Мы также определяем список классов аутентификации authentication_classes, который включает стандартные классы аутентификации, такие как SessionAuthentication, BasicAuthentication и TokenAuthentication.
+
+Мы также определяем список прав доступа permission_classes, который включает один класс IsAuthenticated, что означает, что
+
 ## Как создать представление ограничения запросов в DRF?
 
 Чтобы создать представление **ограничения запросов** в Django REST framework, необходимо создать класс на основе APIView и определить список классов ограничения запросов, которые будут использоваться. В представлении, приведенном в данном примере, используется класс AnonRateThrottle для ограничения количества запросов неаутентифицированных пользователей. Для использования других классов ограничения запросов, их нужно добавить в список throttle_classes внутри представления. Количество запросов можно настроить с помощью параметров в файле настроек DRF. Ниже представлен пример кода:

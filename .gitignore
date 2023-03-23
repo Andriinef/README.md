@@ -24,3 +24,5 @@ data/
 
 # Log files
 *log
+
+.buildt
