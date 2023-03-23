@@ -617,11 +617,19 @@ APIView принимает следующие атрибуты:
 
 * **authentication_classes и permission_classes** используются для переопределения глобальных настроек представления.
 
-## Как использовать классы представлений в DRF?
+## Какие существуют типы представлений в DRF?
 
-Чтобы использовать классы представлений в DRF, нужно создать класс, наследующийся от одного из классов представлений DRF, таких как **APIView, ViewSet, GenericAPIView** и др. Этот класс будет представлять наш API Endpoint.
+В DRF существует несколько типов представлений:
 
-В классе представления мы определяем методы, которые будут обрабатывать запросы, такие как get, post, put, delete и др. Методы должны возвращать объекты Response, которые содержат данные, возвращаемые клиенту.
+* **APIView** - базовое представление, которое используется для создания кастомных представлений;
+
+* **GenericAPIView** - представление, которое предоставляет базовые методы для работы с данными, такие как get(), post(), put() и т.д.;
+
+* **ViewSet** - представление, которое позволяет сгруппировать несколько методов в одном представлении;
+
+* **ModelViewSet** - представление, которое автоматически генерирует CRUD методы на основе модели;
+
+* **ReadOnlyModelViewSet** - представление, которое генерирует только методы для чтения данных из модели.
 
 ## APIView
 
@@ -1178,3 +1186,183 @@ REST_FRAMEWORK = {
 ```
 
 Это означает, что мы устанавливаем ограничение в 5 запросов в час для всех запросов, связанных со scope 'user'.
+
+## Как использовать DRF для обработки ошибок?
+
+Для обработки ошибок в Django Rest Framework (DRF) можно использовать класс APIView. В классе APIView есть метод **handle_exception** который обрабатывает все исключения, которые возникают при выполнении запроса.
+
+Пример использования:
+
+```python
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+class MyAPIView(APIView):
+    def get(self, request, format=None):
+        try:
+            # Код обработки GET запроса
+            return Response({'message': 'Success'})
+        except Exception as e:
+            # Обработка ошибок
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+```
+
+В данном примере мы перехватываем все исключения, которые возникают при обработке GET запроса, и возвращаем сообщение об ошибке с соответствующим статусом. Конструкция status=status.HTTP_400_BAD_REQUEST устанавливает статус код ответа HTTP 400 Bad Request.
+
+Также можно использовать декоратор **@api_view** и функцию **exception_handler** для обработки ошибок. Обработка ошибок при этом будет происходить для всех представлений в приложении.
+
+Пример использования:
+
+```python
+from rest_framework.decorators import api_view
+from rest_framework.views import exception_handler
+from rest_framework.response import Response
+from rest_framework import status
+
+@api_view()
+def my_view(request):
+    try:
+        # Код обработки запроса
+        return Response({'message': 'Success'})
+    except Exception as e:
+        # Обработка ошибок
+        return exception_handler(e, request)
+
+def custom_exception_handler(exc, context):
+    response = exception_handler(exc, context)
+    if response is not None:
+        response.data['status_code'] = response.status_code
+    return response
+```
+
+В данном примере обрабатываем все исключения в функции my_view, используя функцию exception_handler. Также определяем свою функцию custom_exception_handler, которая добавляет код статуса в данные ответа. При необходимости, данную функцию необходимо зарегистрировать в файле настроек приложения.
+
+## Как использовать DRF для обработки исключений Django?
+
+Чтобы использовать DRF для обработки исключений Django, вам нужно добавить **middleware** обработки исключений и настроить его в settings.py:
+
+```python
+MIDDLEWARE = [
+    # ...
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'rest_framework.middleware.ExceptionHandlerMiddleware',
+]
+
+# ...
+
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'myapp.api.custom_exception_handler'
+}
+```
+
+Вы можете создать свой обработчик исключений, который будет выполнять необходимые действия в зависимости от типа возникшей ошибки.
+
+Пример обработчика:
+
+```python
+from rest_framework.views import exception_handler
+from rest_framework.response import Response
+from rest_framework import status
+
+def custom_exception_handler(exc, context):
+    response = exception_handler(exc, context)
+
+    if response is None:
+        return Response(
+            {'detail': 'Внутренняя ошибка сервера'},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+    return response
+```
+
+Этот обработчик будет возвращать HTTP 500 Internal Server Error и сообщение "Внутренняя ошибка сервера", если возникнет исключение, которое не обработано явно.
+
+## Как создание документации для API   DRF?
+
+Создание документации для API в Django REST Framework (DRF) можно выполнить с помощью инструментов, таких как Swagger и OpenAPI.
+
+Swagger предоставляет набор инструментов для создания, документирования и тестирования API. Он позволяет создавать документацию API в формате OpenAPI, который определяет стандартный способ описания RESTful API.
+
+Для создания документации OpenAPI для Django REST Framework (DRF) можно использовать инструмент DRF-yasg. DRF-yasg позволяет создавать документацию OpenAPI из DRF ViewSets и функций представлений, определенных в вашем проекте.
+
+Вот пример шагов для создания документации OpenAPI для DRF с использованием DRF-yasg:
+
+Установите DRF-yasg с помощью pip:
+
+```code
+pip install drf-yasg
+```
+
+Добавьте 'drf_yasg' в INSTALLED_APPS в настройках проекта:
+
+```python
+INSTALLED_APPS = [
+    # ...
+    'drf_yasg',
+]
+```
+
+Создайте файл urls.py в приложении, для которого вы хотите создать документацию, и добавьте следующий код:
+
+```python
+from django.urls import path, include
+from rest_framework import routers
+from rest_framework.documentation import include_docs_urls
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+router = routers.DefaultRouter()
+# ... Добавьте представления и URL-шаблоны в ваш роутер ...
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="API Documentation",
+        default_version='v1',
+        description="API documentation for my project",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@myproject.local"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+```
+
+Пример второй:
+
+```python
+from django.urls import path, include
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+    openapi.Info(
+        title="API Documentation",
+        default_version='v1',
+        description="API documentation for my project",
+        terms_of_service="https://www.google.com/policies/terms/",
+        contact=openapi.Contact(email="contact@myproject.local"),
+        license=openapi.License(name="BSD License"),
+    ),
+    public=True,
+    permission_classes=(permissions.AllowAny,),
+)
+
+urlpatterns = [
+    ...
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    path('', include('myapp.urls')),
+]
+```
+
+Запустите Django сервер и перейдите по ссылке [http://localhost:8000/swagger/](http://localhost:8000/swagger/), чтобы увидеть документацию вашего API в формате Swagger.
