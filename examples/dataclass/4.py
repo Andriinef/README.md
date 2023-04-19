@@ -24,12 +24,7 @@ user_data = UserData(username="u1", email="u1@gmail.com", age=17)
 user_setting = UserSettings(notifications_enabled=True, language="EN", theme="Dark")
 
 user_account = UserAccount(
-    notifications_enabled=True,
-    language="EN",
-    theme="Dark",
-    username="u2",
-    email="u2@gmail.com",
-    age=18
+    notifications_enabled=True, language="EN", theme="Dark", username="u2", email="u2@gmail.com", age=18
 )
 
 print(user_data)

@@ -1,5 +1,3 @@
-
-
 class DebugInfo:
     def __repr__(self):
         cls_name = self.__class__.__name__
@@ -28,10 +26,7 @@ class UserData:
 
 
 class UserAccount:
-    def __init__(
-        self, *, notifications_enabled: bool, language: str, theme: str,
-        username: str, email: str, age: int
-    ):
+    def __init__(self, *, notifications_enabled: bool, language: str, theme: str, username: str, email: str, age: int):
         self.notifications_enabled = notifications_enabled
         self.language = language
         self.theme = theme
@@ -40,8 +35,10 @@ class UserAccount:
         self.age = age
 
     def __repr__(self):
-        result = f"{self.notifications_enabled=}, {self.language=}, {self.theme=} " + \
-                 f"{self.username=}, {self.email=}, {self.age}"
+        result = (
+            f"{self.notifications_enabled=}, {self.language=}, {self.theme=} "
+            + f"{self.username=}, {self.email=}, {self.age}"
+        )
         return f"UserAccount({result})"
 
 
@@ -49,12 +46,7 @@ user_data = UserData(username="u1", email="u1@gmail.com", age=17)
 user_setting = UserSettings(notifications_enabled=True, language="EN", theme="Dark")
 
 user_account = UserAccount(
-    notifications_enabled=True,
-    language="EN",
-    theme="Dark",
-    username="u2",
-    email="u2@gmail.com",
-    age=18
+    notifications_enabled=True, language="EN", theme="Dark", username="u2", email="u2@gmail.com", age=18
 )
 
 print(user_data)

@@ -1,4 +1,4 @@
-from functools import total_ordering
+# from functools import total_ordering
 
 
 # @total_ordering
@@ -21,28 +21,22 @@ class UserData:
         return self.__email
 
     def __eq__(self, other):
-        return ((self.__user_id, self.__username, self.__email) ==
-                (other.__user_id, other.__username, other.__email))
+        return (self.__user_id, self.__username, self.__email) == (other.__user_id, other.__username, other.__email)
 
     def __ne__(self, other):
-        return ((self.__user_id, self.__username, self.__email) !=
-                (other.__user_id, other.__username, other.__email))
+        return (self.__user_id, self.__username, self.__email) != (other.__user_id, other.__username, other.__email)
 
     def __lt__(self, other):
-        return ((self.__user_id, self.__username, self.__email) <
-                (other.__user_id, other.__username, other.__email))
+        return (self.__user_id, self.__username, self.__email) < (other.__user_id, other.__username, other.__email)
 
     def __le__(self, other):
-        return ((self.__user_id, self.__username, self.__email) <=
-                (other.__user_id, other.__username, other.__email))
+        return (self.__user_id, self.__username, self.__email) <= (other.__user_id, other.__username, other.__email)
 
     def __gt__(self, other):
-        return ((self.__user_id, self.__username, self.__email) >
-                (other.__user_id, other.__username, other.__email))
+        return (self.__user_id, self.__username, self.__email) > (other.__user_id, other.__username, other.__email)
 
     def __ge__(self, other):
-        return ((self.__user_id, self.__username, self.__email) >=
-                (other.__user_id, other.__username, other.__email))
+        return (self.__user_id, self.__username, self.__email) >= (other.__user_id, other.__username, other.__email)
 
     def __repr__(self):
         return f"UserData({self.__user_id=}, {self.__username=}, {self.__email=})"
